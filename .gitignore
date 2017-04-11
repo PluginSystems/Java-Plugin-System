@@ -1,4 +1,6 @@
 .idea
-JavaPluginLoader.iml
+*.iml
 plugins
 target
+*.log
+*.log.lck
