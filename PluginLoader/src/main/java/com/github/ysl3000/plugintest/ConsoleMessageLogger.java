@@ -2,10 +2,8 @@ package com.github.ysl3000.plugintest;
 
 import com.github.ysl3000.pluginsystem.interfaces.MessageLogger;
 
-import java.io.IOException;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 
 /**
  * Created by ysl3000
@@ -18,6 +16,7 @@ public class ConsoleMessageLogger implements MessageLogger {
 
     public ConsoleMessageLogger() {
 
+        /*
         logger = Logger.getAnonymousLogger();
 
         try {
@@ -28,6 +27,7 @@ public class ConsoleMessageLogger implements MessageLogger {
             e.printStackTrace();
         }
 
+*/
     }
 
 
@@ -38,11 +38,12 @@ public class ConsoleMessageLogger implements MessageLogger {
 
     @Override
     public void info(String message) {
-        System.out.println("[INFO] " + message);
+        //System.out.println("[INFO] " + message);
     }
 
     @Override
     public void info2LogFile(String message) {
-        logger.info(message);
+        //System.out.println(message);
+        //logger.info(message);
     }
 }

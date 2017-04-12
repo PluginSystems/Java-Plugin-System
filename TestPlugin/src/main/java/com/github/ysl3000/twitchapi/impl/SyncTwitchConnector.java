@@ -10,7 +10,7 @@ import org.json.simple.parser.ParseException;
 import java.io.IOException;
 
 /**
- * Created by ysl3000 on 30.12.16.
+ * Created by ysl3000
  */
 public class SyncTwitchConnector {
 

@@ -2,7 +2,6 @@ package com.github.ysl3000.pluginsystem;
 
 import com.github.ysl3000.pluginsystem.interfaces.MessageLogger;
 import com.github.ysl3000.pluginsystem.interfaces.PluginConfigLoader;
-import org.springframework.util.StopWatch;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -37,8 +36,6 @@ public class PluginLoader<T extends IPlugin> {
         if (folder.exists() && folder.isDirectory()) {
 
 
-            StopWatch stopWatch = new StopWatch("fileLoadingProcess");
-            stopWatch.setKeepTaskList(true);
 
             File[] files = folder.listFiles(new FilenameFilter() {
                 public boolean accept(File dir, String name) {
@@ -49,7 +46,6 @@ public class PluginLoader<T extends IPlugin> {
             if (files != null) {
                 for (File jar : files) {
 
-                    stopWatch.start(jar.getName());
 
                     String mainClass = null;
                     try {
@@ -70,23 +66,17 @@ public class PluginLoader<T extends IPlugin> {
                         e.printStackTrace();
                     }
 
-                    stopWatch.stop();
                 }
             }
 
-            messageLogger.info2LogFile(stopWatch.prettyPrint());
         }
     }
 
     public void enable() {
 
-        StopWatch stopWatch = new StopWatch("enableProcess");
-        stopWatch.setKeepTaskList(true);
-
 
         for (Class<?> clazz : pluginClasses) {
 
-            stopWatch.start(clazz.getName());
 
             try {
                 T plugin = (T) clazz.newInstance();
@@ -97,42 +87,26 @@ public class PluginLoader<T extends IPlugin> {
                 e.printStackTrace();
             }
 
-            stopWatch.stop();
         }
 
 
-        messageLogger.info2LogFile(stopWatch.prettyPrint());
 
     }
 
     public void disable() {
-        StopWatch stopWatch = new StopWatch("disableProcess");
-        stopWatch.setKeepTaskList(true);
-
 
         for (T extension : plugins) {
-            stopWatch.start(extension.getPluginIdentity());
             extension.onDisable();
             messageLogger.info(extension.getPluginIdentity() + " disabled!");
-            stopWatch.stop();
         }
 
 
-        messageLogger.info2LogFile(stopWatch.prettyPrint());
     }
 
     public void unload() {
 
-        StopWatch stopWatch = new StopWatch("unloadProcess");
-        stopWatch.setKeepTaskList(true);
-        stopWatch.start();
-
-
         plugins.clear();
         pluginClasses.clear();
 
-        stopWatch.stop();
-
-        messageLogger.info2LogFile(stopWatch.prettyPrint());
     }
 }
