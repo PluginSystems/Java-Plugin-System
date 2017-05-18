@@ -1,1 +1,1 @@
-main: com.github.ysl3000.TwitchTestPlugin
+main=com.github.ysl3000.TwitchTestPlugin

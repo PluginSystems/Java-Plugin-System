@@ -21,7 +21,7 @@ public class TwitchTestPlugin implements IPlugin {
         try {
             System.out.println("Spiel: " + twitchAPI
                     .getSyncTwitchConnector()
-                    .connectToStream("deadpine").getStream().getGameName());
+                    .connectToStream("yapyap30").getStream().getGameName());
         } catch (Exception e) {
             e.printStackTrace();
         }

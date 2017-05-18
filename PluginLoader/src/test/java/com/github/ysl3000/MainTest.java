@@ -24,9 +24,10 @@ import java.util.concurrent.TimeUnit;
 public class MainTest {
 
 
-
     @Test
     public void testLoader() throws RunnerException {
+
+
 
         Options opt = new OptionsBuilder()
                 // Specify which benchmarks to run.
@@ -38,8 +39,8 @@ public class MainTest {
                 .warmupTime(TimeValue.seconds(1))
                 .warmupIterations(2)
                 .measurementTime(TimeValue.seconds(1))
-                .measurementIterations(100)
-                .threads(8)
+                .measurementIterations(10)
+                .threads(1)
                 .forks(1)
                 .shouldFailOnError(true)
                 .shouldDoGC(true)
@@ -56,7 +57,6 @@ public class MainTest {
 
     @Benchmark
     public void runBenchmark(){
-
         MessageLogger messageLogger = new ConsoleMessageLogger();
         File folder = new File("plugins");
         folder.mkdirs();
@@ -64,12 +64,28 @@ public class MainTest {
         PluginConfigLoader pluginConfigLoader = new PropertyPluginConfigLoader();
 
         PluginLoader<IPlugin> pluginLoader = new PluginLoader<>(messageLogger,folder,pluginConfigLoader);
-
         pluginLoader.load();
 
         //pluginLoader.enable();
 
         //pluginLoader.disable();
+
+    }
+
+    @Benchmark
+    public void runBenchmarkTwitch(){
+        MessageLogger messageLogger = new ConsoleMessageLogger();
+        File folder = new File("plugins");
+        folder.mkdirs();
+
+        PluginConfigLoader pluginConfigLoader = new PropertyPluginConfigLoader();
+
+        PluginLoader<IPlugin> pluginLoader = new PluginLoader<>(messageLogger,folder,pluginConfigLoader);
+        pluginLoader.load();
+
+        pluginLoader.enable();
+
+        pluginLoader.disable();
 
     }
 
