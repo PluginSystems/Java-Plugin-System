@@ -47,7 +47,7 @@ public class MainTest {
                 .include(this.getClass().getName() + ".*")
                 // Set the following options as needed
                 .mode(Mode.AverageTime)
-                .timeUnit(TimeUnit.MILLISECONDS)
+                .timeUnit(TimeUnit.MICROSECONDS)
                 .warmupTime(TimeValue.seconds(1))
                 .warmupIterations(2)
                 .measurementTime(TimeValue.seconds(1))
@@ -61,6 +61,13 @@ public class MainTest {
                 .build();
 
         new Runner(opt).run();
+
+    }
+
+    @Benchmark
+    public void contextSwitchingBenchmark(){
+
+        //todo define method that interacts with api that interacts with plugin
 
     }
 
