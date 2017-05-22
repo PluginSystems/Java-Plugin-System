@@ -24,9 +24,21 @@ import java.util.concurrent.TimeUnit;
 public class MainTest {
 
 
+    private static MessageLogger messageLogger = new ConsoleMessageLogger();
+
+    private static File folder = new File("plugins");
+    private static PluginConfigLoader pluginConfigLoader = new PropertyPluginConfigLoader();
+
+    private static PluginLoader<IPlugin> pluginLoader = new PluginLoader<>(messageLogger, folder, pluginConfigLoader);
+
+    static {
+        folder.mkdirs();
+
+
+    }
+
     @Test
     public void testLoader() throws RunnerException {
-
 
 
         Options opt = new OptionsBuilder()
@@ -34,7 +46,7 @@ public class MainTest {
                 // You can be more specific if you'd like to run only one benchmark per test.
                 .include(this.getClass().getName() + ".*")
                 // Set the following options as needed
-                .mode (Mode.AverageTime)
+                .mode(Mode.AverageTime)
                 .timeUnit(TimeUnit.MILLISECONDS)
                 .warmupTime(TimeValue.seconds(1))
                 .warmupIterations(2)
@@ -50,20 +62,12 @@ public class MainTest {
 
         new Runner(opt).run();
 
-
-
-
     }
 
+
     @Benchmark
-    public void runBenchmark(){
-        MessageLogger messageLogger = new ConsoleMessageLogger();
-        File folder = new File("plugins");
-        folder.mkdirs();
+    public void runBenchmark() {
 
-        PluginConfigLoader pluginConfigLoader = new PropertyPluginConfigLoader();
-
-        PluginLoader<IPlugin> pluginLoader = new PluginLoader<>(messageLogger,folder,pluginConfigLoader);
         pluginLoader.load();
 
         //pluginLoader.enable();
@@ -73,14 +77,17 @@ public class MainTest {
     }
 
     @Benchmark
-    public void runBenchmarkTwitch(){
-        MessageLogger messageLogger = new ConsoleMessageLogger();
-        File folder = new File("plugins");
-        folder.mkdirs();
+    public void benchmarkLoadUnload() {
 
-        PluginConfigLoader pluginConfigLoader = new PropertyPluginConfigLoader();
+        pluginLoader.load();
+        pluginLoader.unload();
 
-        PluginLoader<IPlugin> pluginLoader = new PluginLoader<>(messageLogger,folder,pluginConfigLoader);
+    }
+
+
+    @Benchmark
+    public void runBenchmarkTwitch() {
+
         pluginLoader.load();
 
         pluginLoader.enable();
