@@ -58,12 +58,12 @@ public class PluginLoader<T extends IPlugin> {
                         Class<?> clazz = l.loadClass(mainClass);
                         pluginClasses.add(clazz);
 
-                    } catch (IOException e) {
+                    } catch (IOException ioException) {
                         messageLogger.error("Error while loading module file " + jar.getName());
-                        e.printStackTrace();
-                    } catch (ClassNotFoundException e) {
+                        ioException.printStackTrace();
+                    } catch (ClassNotFoundException classNotFoundException) {
                         messageLogger.error("Class not found! Wrong main defined in extension.yml?: " + jar.getName() + " class: " + mainClass);
-                        e.printStackTrace();
+                        classNotFoundException.printStackTrace();
                     }
 
                 }

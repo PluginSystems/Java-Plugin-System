@@ -7,8 +7,7 @@ import com.github.ysl3000.pluginsystem.interfaces.MessageLogger;
 import com.github.ysl3000.pluginsystem.interfaces.PluginConfigLoader;
 import com.github.ysl3000.plugintest.ConsoleMessageLogger;
 import org.junit.Test;
-import org.openjdk.jmh.annotations.Benchmark;
-import org.openjdk.jmh.annotations.Mode;
+import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
@@ -21,26 +20,19 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by ysl3000
  */
+@State(Scope.Benchmark)
 public class MainTest {
 
 
-    private static MessageLogger messageLogger = new ConsoleMessageLogger();
+    private MessageLogger messageLogger;
 
-    private static File folder = new File("plugins");
-    private static PluginConfigLoader pluginConfigLoader = new PropertyPluginConfigLoader();
+    private File folder;
+    private PluginConfigLoader pluginConfigLoader;
 
-    private static PluginLoader<IPlugin> pluginLoader = new PluginLoader<>(messageLogger, folder, pluginConfigLoader);
-
-    static {
-        folder.mkdirs();
-
-
-    }
+    private PluginLoader<IPlugin> pluginLoader;
 
     @Test
     public void testLoader() throws RunnerException {
-
-
         Options opt = new OptionsBuilder()
                 // Specify which benchmarks to run.
                 // You can be more specific if you'd like to run only one benchmark per test.
@@ -64,8 +56,18 @@ public class MainTest {
 
     }
 
+    @Setup
+    public void setUp() {
+        this.messageLogger = new ConsoleMessageLogger();
+        this.folder = new File("plugins");
+        this.folder.mkdirs();
+        this.pluginConfigLoader = new PropertyPluginConfigLoader();
+        this.pluginLoader = new PluginLoader<>(messageLogger, folder, pluginConfigLoader);
+    }
+
+
     @Benchmark
-    public void contextSwitchingBenchmark(){
+    public void contextSwitchingBenchmark() {
 
         //todo define method that interacts with api that interacts with plugin
 
@@ -103,4 +105,11 @@ public class MainTest {
 
     }
 
+    @TearDown
+    public void tearDown() {
+        this.messageLogger = null;
+        this.folder = null;
+        this.pluginConfigLoader = null;
+        this.pluginLoader = null;
+    }
 }
