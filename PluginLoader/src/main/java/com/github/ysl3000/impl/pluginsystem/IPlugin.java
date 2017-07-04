@@ -7,6 +7,8 @@ public  interface IPlugin {
 
     String getPluginIdentity();
 
+    void onRegister();
+
     void onEnable();
 
     void onDisable();

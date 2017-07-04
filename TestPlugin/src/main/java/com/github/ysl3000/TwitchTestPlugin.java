@@ -13,6 +13,12 @@ public class TwitchTestPlugin implements IPlugin {
         return "TwitchTestPlugin";
     }
 
+
+    @Override
+    public void onRegister() {
+
+    }
+
     @Override
     public void onEnable() {
 

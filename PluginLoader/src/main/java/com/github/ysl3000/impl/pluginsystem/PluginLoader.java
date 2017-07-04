@@ -8,12 +8,14 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 import java.util.zip.ZipFile;
 
 /**
@@ -21,13 +23,14 @@ import java.util.zip.ZipFile;
  */
 public class PluginLoader<T extends IPlugin> {
 
-    private final Map<Class<? extends IPlugin>, T> plugins = new HashMap<>();
+    protected final Map<String, T> plugins = new HashMap<>();
     private final Set<Class<?>> pluginClasses = new HashSet<>();
     private final File folder;
     private MessageLogger messageLogger;
     private PluginConfigLoader pluginConfigLoader;
 
     private Map<Class<? extends IPlugin>, PluginStateChangeListener> listeners = new HashMap<>();
+    private PluginStateChangeListener systemListener;
 
     public PluginLoader(MessageLogger messageLogger, File folder, PluginConfigLoader pluginConfigLoader) {
         this.messageLogger = messageLogger;
@@ -47,9 +50,19 @@ public class PluginLoader<T extends IPlugin> {
                 }
             });
 
+
+            Set<URL> urls = new HashSet<>();
+            Stream.of(files).forEach(jar ->{
+                try {
+                    urls.add(jar.toURI().toURL());
+                } catch (MalformedURLException ignored) {
+                }
+            });
+
+            ClassLoader loader = URLClassLoader.newInstance(urls.toArray(new URL[]{}),getClass().getClassLoader());
+
             if (files != null) {
                 for (File jar : files) {
-
 
                     String mainClass = null;
                     try {
@@ -57,9 +70,8 @@ public class PluginLoader<T extends IPlugin> {
 
                         InputStream is = zipFile.getInputStream(zipFile.getEntry("extension.properties"));
                         mainClass = pluginConfigLoader.getPathToMainPluginClass(is);
-                        ClassLoader l = URLClassLoader.newInstance(new URL[]{jar.toURI().toURL()}, getClass().getClassLoader());
 
-                        Class<?> clazz = l.loadClass(mainClass);
+                        Class<?> clazz = loader.loadClass(mainClass);
                         pluginClasses.add(clazz);
 
                     } catch (IOException ioException) {
@@ -79,17 +91,25 @@ public class PluginLoader<T extends IPlugin> {
     public void enable() {
         for (Class<?> clazz : pluginClasses) {
 
+
             try {
                 Class<? extends IPlugin> castedClass = (Class<? extends IPlugin>) clazz;
-                T plugin = (T) castedClass.newInstance();
-                plugin.onEnable();
-                plugins.put(castedClass, plugin);
-                messageLogger.info(plugin.getPluginIdentity() + " enabled!");
+                final T plugin = (T) castedClass.newInstance();
+                plugins.put(castedClass.getSimpleName(), plugin);
+                plugin.onRegister();
             } catch (InstantiationException | IllegalAccessException e) {
                 e.printStackTrace();
             }
 
         }
+
+        plugins.values().forEach(plugin -> {
+            plugin.onEnable();
+            listeners.values().parallelStream().forEach(l -> l.onPluginGetsEnabled(plugin));
+            if (systemListener != null) systemListener.onPluginGetsEnabled(plugin);
+            messageLogger.info(plugin.getPluginIdentity() + " enabled!");
+
+        });
 
 
     }
@@ -99,6 +119,8 @@ public class PluginLoader<T extends IPlugin> {
         for (T extension : plugins.values()) {
             this.removeListeners(extension);
             extension.onDisable();
+            listeners.values().parallelStream().forEach(l -> l.onPluginGetsDisabled(extension));
+            if (systemListener != null) systemListener.onPluginGetsDisabled(extension);
             messageLogger.info(extension.getPluginIdentity() + " disabled!");
         }
 
@@ -118,11 +140,12 @@ public class PluginLoader<T extends IPlugin> {
         this.listeners.put(plugin.getClass(), listener);
     }
 
-    public <K extends IPlugin> K getPlugin(Class<K> clazz) {
-        if (plugins.containsKey(clazz)) {
-            return (K) plugins.get(clazz);
-        }
-        return null;
+    public void addSystemListener(PluginStateChangeListener listener) {
+        this.systemListener = listener;
+    }
+
+    public IPlugin getPlugin(String pluginName) {
+        return plugins.get(pluginName);
     }
 
 }
