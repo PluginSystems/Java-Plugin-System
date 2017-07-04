@@ -3,7 +3,6 @@ package com.github.ysl3000;
 import com.github.ysl3000.api.ContextAPI;
 import com.github.ysl3000.api.PluginStateChangeListener;
 import com.github.ysl3000.impl.pluginsystem.IPlugin;
-import com.github.ysl3000.impl.pluginsystem.interfaces.PrintOther;
 
 /**
  * Created by ysl3000
@@ -39,8 +38,8 @@ public class Plugin2 implements IPlugin, PluginStateChangeListener {
     @Override
     public void onPluginGetsEnabled(IPlugin plugin) {
 
-        if(plugin instanceof PrintOther){
-            ((PrintOther) plugin).printOther(this);
+        if(plugin instanceof Plugin3){
+            ((Plugin3) plugin).printOther(this);
         }
 
 
