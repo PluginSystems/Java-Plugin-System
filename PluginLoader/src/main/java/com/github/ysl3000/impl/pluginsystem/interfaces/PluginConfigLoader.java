@@ -1,4 +1,4 @@
-package com.github.ysl3000.pluginsystem.interfaces;
+package com.github.ysl3000.impl.pluginsystem.interfaces;
 
 import java.io.IOException;
 import java.io.InputStream;

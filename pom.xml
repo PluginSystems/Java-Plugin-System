@@ -12,6 +12,8 @@
     <modules>
         <module>PluginLoader</module>
         <module>TestPlugin</module>
+        <module>Plugin2</module>
+        <module>Plugin3</module>
     </modules>
 
 </project>

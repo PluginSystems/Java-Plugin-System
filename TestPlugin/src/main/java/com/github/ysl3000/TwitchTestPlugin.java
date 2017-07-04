@@ -1,7 +1,7 @@
 package com.github.ysl3000;
 
 
-import com.github.ysl3000.pluginsystem.IPlugin;
+import com.github.ysl3000.impl.pluginsystem.IPlugin;
 import com.github.ysl3000.twitchapi.TwitchAPI;
 
 /**
@@ -10,7 +10,7 @@ import com.github.ysl3000.twitchapi.TwitchAPI;
 public class TwitchTestPlugin implements IPlugin {
     @Override
     public String getPluginIdentity() {
-        return "CustomTwitchTestPlugin2";
+        return "TwitchTestPlugin";
     }
 
     @Override

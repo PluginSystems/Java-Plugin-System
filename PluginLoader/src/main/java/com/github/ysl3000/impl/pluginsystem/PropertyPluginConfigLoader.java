@@ -1,6 +1,6 @@
-package com.github.ysl3000.pluginsystem;
+package com.github.ysl3000.impl.pluginsystem;
 
-import com.github.ysl3000.pluginsystem.interfaces.PluginConfigLoader;
+import com.github.ysl3000.impl.pluginsystem.interfaces.PluginConfigLoader;
 
 import java.io.IOException;
 import java.io.InputStream;

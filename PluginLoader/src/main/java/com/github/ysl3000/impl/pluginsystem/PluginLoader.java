@@ -1,7 +1,8 @@
-package com.github.ysl3000.pluginsystem;
+package com.github.ysl3000.impl.pluginsystem;
 
-import com.github.ysl3000.pluginsystem.interfaces.MessageLogger;
-import com.github.ysl3000.pluginsystem.interfaces.PluginConfigLoader;
+import com.github.ysl3000.api.PluginStateChangeListener;
+import com.github.ysl3000.impl.pluginsystem.interfaces.MessageLogger;
+import com.github.ysl3000.impl.pluginsystem.interfaces.PluginConfigLoader;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -9,7 +10,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipFile;
 
@@ -18,11 +21,13 @@ import java.util.zip.ZipFile;
  */
 public class PluginLoader<T extends IPlugin> {
 
-    private final Set<T> plugins = new HashSet<>();
+    private final Map<Class<? extends IPlugin>, T> plugins = new HashMap<>();
     private final Set<Class<?>> pluginClasses = new HashSet<>();
     private final File folder;
     private MessageLogger messageLogger;
     private PluginConfigLoader pluginConfigLoader;
+
+    private Map<Class<? extends IPlugin>, PluginStateChangeListener> listeners = new HashMap<>();
 
     public PluginLoader(MessageLogger messageLogger, File folder, PluginConfigLoader pluginConfigLoader) {
         this.messageLogger = messageLogger;
@@ -34,7 +39,6 @@ public class PluginLoader<T extends IPlugin> {
     public void load() {
 
         if (folder.exists() && folder.isDirectory()) {
-
 
 
             File[] files = folder.listFiles(new FilenameFilter() {
@@ -51,7 +55,7 @@ public class PluginLoader<T extends IPlugin> {
                     try {
                         ZipFile zipFile = new ZipFile(jar);
 
-                        InputStream is = zipFile.getInputStream(zipFile.getEntry("extension.yml"));
+                        InputStream is = zipFile.getInputStream(zipFile.getEntry("extension.properties"));
                         mainClass = pluginConfigLoader.getPathToMainPluginClass(is);
                         ClassLoader l = URLClassLoader.newInstance(new URL[]{jar.toURI().toURL()}, getClass().getClassLoader());
 
@@ -73,15 +77,13 @@ public class PluginLoader<T extends IPlugin> {
     }
 
     public void enable() {
-
-
         for (Class<?> clazz : pluginClasses) {
 
-
             try {
-                T plugin = (T) clazz.newInstance();
+                Class<? extends IPlugin> castedClass = (Class<? extends IPlugin>) clazz;
+                T plugin = (T) castedClass.newInstance();
                 plugin.onEnable();
-                plugins.add(plugin);
+                plugins.put(castedClass, plugin);
                 messageLogger.info(plugin.getPluginIdentity() + " enabled!");
             } catch (InstantiationException | IllegalAccessException e) {
                 e.printStackTrace();
@@ -90,12 +92,12 @@ public class PluginLoader<T extends IPlugin> {
         }
 
 
-
     }
 
     public void disable() {
 
-        for (T extension : plugins) {
+        for (T extension : plugins.values()) {
+            this.removeListeners(extension);
             extension.onDisable();
             messageLogger.info(extension.getPluginIdentity() + " disabled!");
         }
@@ -103,10 +105,24 @@ public class PluginLoader<T extends IPlugin> {
 
     }
 
-    public void unload() {
+    private void removeListeners(IPlugin plugin) {
+        this.listeners.remove(plugin.getClass());
+    }
 
+    public void unload() {
         plugins.clear();
         pluginClasses.clear();
-
     }
+
+    public void addListener(IPlugin plugin, PluginStateChangeListener listener) {
+        this.listeners.put(plugin.getClass(), listener);
+    }
+
+    public <K extends IPlugin> K getPlugin(Class<K> clazz) {
+        if (plugins.containsKey(clazz)) {
+            return (K) plugins.get(clazz);
+        }
+        return null;
+    }
+
 }

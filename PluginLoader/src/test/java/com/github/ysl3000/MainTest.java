@@ -1,11 +1,14 @@
 package com.github.ysl3000;
 
-import com.github.ysl3000.pluginsystem.IPlugin;
-import com.github.ysl3000.pluginsystem.PluginLoader;
-import com.github.ysl3000.pluginsystem.PropertyPluginConfigLoader;
-import com.github.ysl3000.pluginsystem.interfaces.MessageLogger;
-import com.github.ysl3000.pluginsystem.interfaces.PluginConfigLoader;
-import com.github.ysl3000.plugintest.ConsoleMessageLogger;
+import com.github.ysl3000.api.ContextAPI;
+import com.github.ysl3000.api.ContextInterface;
+import com.github.ysl3000.impl.ContextImplementation;
+import com.github.ysl3000.impl.pluginsystem.IPlugin;
+import com.github.ysl3000.impl.pluginsystem.PluginLoader;
+import com.github.ysl3000.impl.pluginsystem.PropertyPluginConfigLoader;
+import com.github.ysl3000.impl.pluginsystem.interfaces.MessageLogger;
+import com.github.ysl3000.impl.pluginsystem.interfaces.PluginConfigLoader;
+import com.github.ysl3000.impl.plugintest.ConsoleMessageLogger;
 import org.junit.Test;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.runner.Runner;
@@ -30,6 +33,8 @@ public class MainTest {
     private PluginConfigLoader pluginConfigLoader;
 
     private PluginLoader<IPlugin> pluginLoader;
+
+    private ContextInterface contextInterface;
 
     @Test
     public void testLoader() throws RunnerException {
@@ -63,6 +68,8 @@ public class MainTest {
         this.folder.mkdirs();
         this.pluginConfigLoader = new PropertyPluginConfigLoader();
         this.pluginLoader = new PluginLoader<>(messageLogger, folder, pluginConfigLoader);
+        this.contextInterface= new ContextImplementation(this.pluginLoader);
+        ContextAPI.setImpl(this.contextInterface);
     }
 
 
@@ -111,5 +118,6 @@ public class MainTest {
         this.folder = null;
         this.pluginConfigLoader = null;
         this.pluginLoader = null;
+        this.contextInterface=null;
     }
 }

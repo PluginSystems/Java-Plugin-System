@@ -1,4 +1,4 @@
-package com.github.ysl3000.pluginsystem.interfaces;
+package com.github.ysl3000.impl.pluginsystem.interfaces;
 
 /**
  * Created by ysl3000

@@ -1,6 +1,6 @@
-package com.github.ysl3000.plugintest;
+package com.github.ysl3000.impl.plugintest;
 
-import com.github.ysl3000.pluginsystem.interfaces.MessageLogger;
+import com.github.ysl3000.impl.pluginsystem.interfaces.MessageLogger;
 
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
