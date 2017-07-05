@@ -1,6 +1,7 @@
 .idea
 *.iml
 plugins
+disabled
 target
 *.log
 *.log.lck

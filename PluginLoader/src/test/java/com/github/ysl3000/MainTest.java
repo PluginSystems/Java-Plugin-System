@@ -27,7 +27,7 @@ public class MainTest {
                 .warmupTime(TimeValue.seconds(1))
                 .warmupIterations(2)
                 .measurementTime(TimeValue.seconds(1))
-                .measurementIterations(10)
+                .measurementIterations(50)
                 .threads(1)
                 .forks(1)
                 .shouldFailOnError(true)
