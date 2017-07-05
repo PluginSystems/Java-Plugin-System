@@ -1,5 +1,6 @@
 package com.github.ysl3000.impl.pluginsystem;
 
+import com.github.ysl3000.api.IPlugin;
 import com.github.ysl3000.api.PluginStateChangeListener;
 import com.github.ysl3000.impl.pluginsystem.interfaces.MessageLogger;
 import com.github.ysl3000.impl.pluginsystem.interfaces.PluginConfigLoader;
@@ -23,7 +24,7 @@ import java.util.zip.ZipFile;
 public class PluginLoader<T extends IPlugin> {
 
     protected final Map<String, T> plugins = new HashMap<>();
-    private final Set<Class<?>> pluginClasses = new HashSet<>();
+    private final Set<Class<IPlugin>> pluginClasses = new HashSet<>();
     private final File folder;
     private MessageLogger messageLogger;
     private PluginConfigLoader pluginConfigLoader;
@@ -65,7 +66,8 @@ public class PluginLoader<T extends IPlugin> {
                         InputStream is = zipFile.getInputStream(zipFile.getEntry("extension.properties"));
                         mainClass = pluginConfigLoader.getPathToMainPluginClass(is);
                         Class<?> clazz = loader.loadClass(mainClass);
-                        pluginClasses.add(clazz);
+                        if(clazz.isAssignableFrom(IPlugin.class))
+                        pluginClasses.add((Class<IPlugin>) clazz);
 
                     } catch (IOException ioException) {
                         messageLogger.error("Error while loading module file " + jar.getName());

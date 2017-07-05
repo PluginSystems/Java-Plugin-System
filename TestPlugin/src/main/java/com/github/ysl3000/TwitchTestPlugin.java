@@ -1,7 +1,7 @@
 package com.github.ysl3000;
 
 
-import com.github.ysl3000.impl.pluginsystem.IPlugin;
+import com.github.ysl3000.api.IPlugin;
 import com.github.ysl3000.twitchapi.TwitchAPI;
 
 /**

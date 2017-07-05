@@ -1,6 +1,7 @@
 package com.github.ysl3000.impl.pluginsystem;
 
 import com.github.ysl3000.api.ContextInterface;
+import com.github.ysl3000.api.IPlugin;
 import com.github.ysl3000.api.PluginStateChangeListener;
 
 /**

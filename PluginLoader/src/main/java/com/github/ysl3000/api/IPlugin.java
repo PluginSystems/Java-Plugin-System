@@ -1,4 +1,4 @@
-package com.github.ysl3000.impl.pluginsystem;
+package com.github.ysl3000.api;
 
 /**
  * Created by ysl3000
