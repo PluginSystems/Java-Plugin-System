@@ -1,5 +1,6 @@
 package com.github.ysl3000;
 
+import org.junit.Test;
 import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
@@ -14,7 +15,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class MainTest {
 
-    //@Test
+    @Test
     public void testLoader() throws RunnerException {
         Options opt = new OptionsBuilder()
                 // Specify which benchmarks to run.

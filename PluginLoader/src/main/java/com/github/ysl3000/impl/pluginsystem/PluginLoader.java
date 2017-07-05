@@ -5,7 +5,6 @@ import com.github.ysl3000.impl.pluginsystem.interfaces.MessageLogger;
 import com.github.ysl3000.impl.pluginsystem.interfaces.PluginConfigLoader;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -44,11 +43,7 @@ public class PluginLoader<T extends IPlugin> {
         if (folder.exists() && folder.isDirectory()) {
 
 
-            File[] files = folder.listFiles(new FilenameFilter() {
-                public boolean accept(File dir, String name) {
-                    return name.endsWith(".jar");
-                }
-            });
+            File[] files = folder.listFiles((dir, name) -> name.endsWith(".jar"));
 
 
             Set<URL> urls = new HashSet<>();
@@ -67,10 +62,8 @@ public class PluginLoader<T extends IPlugin> {
                     String mainClass = null;
                     try {
                         ZipFile zipFile = new ZipFile(jar);
-
                         InputStream is = zipFile.getInputStream(zipFile.getEntry("extension.properties"));
                         mainClass = pluginConfigLoader.getPathToMainPluginClass(is);
-
                         Class<?> clazz = loader.loadClass(mainClass);
                         pluginClasses.add(clazz);
 
@@ -90,8 +83,6 @@ public class PluginLoader<T extends IPlugin> {
 
     public void enable() {
         for (Class<?> clazz : pluginClasses) {
-
-
             try {
                 Class<? extends IPlugin> castedClass = (Class<? extends IPlugin>) clazz;
                 final T plugin = (T) castedClass.newInstance();
@@ -100,9 +91,7 @@ public class PluginLoader<T extends IPlugin> {
             } catch (InstantiationException | IllegalAccessException e) {
                 e.printStackTrace();
             }
-
         }
-
         plugins.values().forEach(plugin -> {
             plugin.onEnable();
             listeners.values().parallelStream().forEach(l -> l.onPluginGetsEnabled(plugin));
@@ -110,12 +99,9 @@ public class PluginLoader<T extends IPlugin> {
             messageLogger.info(plugin.getPluginIdentity() + " enabled!");
 
         });
-
-
     }
 
     public void disable() {
-
         for (T extension : plugins.values()) {
             this.removeListeners(extension);
             extension.onDisable();
@@ -123,8 +109,6 @@ public class PluginLoader<T extends IPlugin> {
             if (systemListener != null) systemListener.onPluginGetsDisabled(extension);
             messageLogger.info(extension.getPluginIdentity() + " disabled!");
         }
-
-
     }
 
     private void removeListeners(IPlugin plugin) {
