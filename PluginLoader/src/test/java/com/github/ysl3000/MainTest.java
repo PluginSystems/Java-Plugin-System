@@ -24,10 +24,10 @@ public class MainTest {
                 // Set the following options as needed
                 .mode(Mode.SampleTime)
                 .timeUnit(TimeUnit.NANOSECONDS)
-                .warmupTime(TimeValue.seconds(1))
+                .warmupTime(TimeValue.NONE)
                 .warmupIterations(2)
-                .measurementTime(TimeValue.nanoseconds(1))
-                .measurementIterations(250)
+                .measurementTime(TimeValue.NONE)
+                .measurementIterations(10)
                 .threads(1)
                 .forks(1)
                 .shouldFailOnError(true)

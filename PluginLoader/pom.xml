@@ -66,11 +66,13 @@
             <groupId>com.github.ysl3000</groupId>
             <artifactId>Plugin2</artifactId>
             <version>1.0-SNAPSHOT</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.github.ysl3000</groupId>
             <artifactId>Plugin3</artifactId>
             <version>1.0-SNAPSHOT</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
