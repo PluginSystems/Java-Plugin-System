@@ -1,33 +1,23 @@
 package com.github.ysl3000;
 
-import com.github.ysl3000.api.ContextAPI;
-import com.github.ysl3000.api.PluginStateChangeListener;
 import com.github.ysl3000.api.IPlugin;
 
 /**
  * Created by ysl3000
  */
-public class Plugin2 implements IPlugin, PluginStateChangeListener {
+public class Plugin2 implements IPlugin, Mathematic {
     public String getPluginIdentity() {
         return "Plugin2";
     }
 
     @Override
     public void onRegister() {
-        ContextAPI.getSystem().registerPluginEnableListener(this, this);
+
     }
 
     public void onEnable() {
 
 
-        ContextAPI.getSystem().printPlugins();
-
-        IPlugin plugin3 =ContextAPI.getSystem().getPlugin("Plugin3");
-
-        if(plugin3 != null)
-        if(plugin3 instanceof Plugin3){
-            ((Plugin3) plugin3).printOther(this);
-        }
     }
 
     @Override
@@ -36,21 +26,27 @@ public class Plugin2 implements IPlugin, PluginStateChangeListener {
     }
 
     @Override
-    public void onPluginGetsEnabled(IPlugin plugin) {
-
-        if(plugin instanceof Plugin3){
-            ((Plugin3) plugin).printOther(this);
-        }
-
-
-        if (plugin.getPluginIdentity().equalsIgnoreCase("Plugin3")) {
-            System.out.println("Plugin "+plugin.getPluginIdentity()+" is there!");
-
-
-        }
+    public double add(double value1, double value2) {
+        return value1 + value1;
     }
+
     @Override
-    public void onPluginGetsDisabled(IPlugin plugin) {
-
+    public double subtract(double value1, double value2) {
+        return value1 - value2;
     }
+
+    @Override
+    public double multiply(double value1, double value2) {
+
+
+        return value1 * value2;
+    }
+
+    @Override
+    public double divide(double value1, double value2) throws CannotDivideException {
+        if (value1 == 0 || value2 == 0) throw new CannotDivideException("either value1 or value2 is zero");
+        return value1/value2;
+    }
+
+
 }

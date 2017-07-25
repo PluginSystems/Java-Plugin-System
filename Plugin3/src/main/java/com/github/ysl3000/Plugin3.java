@@ -22,8 +22,12 @@ public class Plugin3 implements IPlugin{
 
     }
 
-    public void printOther(IPlugin iPlugin){
-        System.out.println("The identity of the other plugin is: "+iPlugin.getPluginIdentity());
+    public void printMessage(String message){
+        System.out.println("Printed message: "+message);
+    }
+
+    public String returnMessage(String message){
+        return "Returned message: "+message;
     }
 
 }
