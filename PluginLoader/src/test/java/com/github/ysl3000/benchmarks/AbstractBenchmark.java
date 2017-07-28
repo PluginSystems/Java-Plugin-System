@@ -1,31 +1,44 @@
 package com.github.ysl3000.benchmarks;
 
-import com.github.ysl3000.PreparePluginLoader;
-import org.openjdk.jmh.annotations.Scope;
-import org.openjdk.jmh.annotations.Setup;
-import org.openjdk.jmh.annotations.State;
-import org.openjdk.jmh.annotations.TearDown;
+import com.github.ysl3000.impl.pluginsystem.IPlugin;
+import com.github.ysl3000.impl.pluginsystem.PluginLoader;
+import com.github.ysl3000.impl.pluginsystem.PropertyPluginConfigLoader;
+import com.github.ysl3000.impl.pluginsystem.interfaces.MessageLogger;
+import com.github.ysl3000.impl.pluginsystem.interfaces.PluginConfigLoader;
+import com.github.ysl3000.impl.plugintest.ConsoleMessageLogger;
+import com.github.ysl3000.utils.PluginTestCase;
+
+import java.io.File;
 
 /**
  * Created by ysl3000
  */
-@State(Scope.Benchmark)
-public class AbstractBenchmark {
+public abstract class AbstractBenchmark extends PluginTestCase {
+    private MessageLogger messageLogger;
+    private File folder;
+    private PluginConfigLoader pluginConfigLoader;
 
-    protected PreparePluginLoader preparePluginLoader;
+    protected AbstractBenchmark(PluginLoader<IPlugin> pluginLoader) {
+        super(pluginLoader);
+    }
 
-    @Setup
-    public void setUp() {
-        preparePluginLoader = new PreparePluginLoader();
-        preparePluginLoader.setUp();
+@Override
+protected void SetUp() {
+
+        this.messageLogger = new ConsoleMessageLogger();
+        this.folder = new File("plugins");
+        this.folder.mkdirs();
+        this.pluginConfigLoader = new PropertyPluginConfigLoader();
+        this._pluginLoader = new PluginLoader<>(messageLogger, folder, pluginConfigLoader);
 
     }
 
-    @TearDown
-    public void tearDown() {
-        preparePluginLoader.tearDown();
-        preparePluginLoader=null;
-
+    @Override
+    protected void TearDown() {
+        this.messageLogger = null;
+        this.folder = null;
+        this.pluginConfigLoader = null;
+        this._pluginLoader = null;
     }
 
 }

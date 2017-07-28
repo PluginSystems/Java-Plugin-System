@@ -2,30 +2,50 @@ package com.github.ysl3000.benchmarks;
 
 import com.github.ysl3000.Plugin3;
 import com.github.ysl3000.impl.pluginsystem.IPlugin;
-import org.openjdk.jmh.annotations.Benchmark;
+import com.github.ysl3000.impl.pluginsystem.PluginLoader;
 
 public class ContextSwitchBenchmark extends AbstractBenchmark{
 
 
     private Plugin3 plugin3;
 
-    @Override
-    public void setUp() {
-        super.setUp();
+    public ContextSwitchBenchmark(PluginLoader<IPlugin> pluginLoader) {
+        super(pluginLoader);
+    }
 
-        IPlugin plugin = preparePluginLoader.getPluginLoader().getPlugin("Plugin3");
+    @Override
+    protected void SetUp() {
+
+        super.SetUp();
+        _pluginLoader.load();
+        _pluginLoader.enable();
+
+        IPlugin plugin = _pluginLoader.getPlugin("Plugin3");
         if(plugin != null && plugin instanceof Plugin3){
             plugin3 = (Plugin3) plugin;
         }
 
+
     }
 
-    @Benchmark
-    public void runBenchmark(){
-
+    @Override
+    protected void RunTest(int currentCycle) {
+        StartTimer();
         if(plugin3 != null){
             plugin3.test();
         }
+        StopTimer();
+
+        DefineBenchmarkPoint(currentCycle, "Enable_Disable_Run");
+
+        ResetTimer();
     }
 
+    @Override
+    protected void TearDown() {
+        _pluginLoader.disable();
+        _pluginLoader.unload();
+
+        super.TearDown();
+    }
 }

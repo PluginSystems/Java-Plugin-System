@@ -1,17 +1,27 @@
 package com.github.ysl3000.benchmarks;
 
-import org.openjdk.jmh.annotations.Benchmark;
+import com.github.ysl3000.impl.pluginsystem.IPlugin;
+import com.github.ysl3000.impl.pluginsystem.PluginLoader;
 
 /**
  * Created by ysl3000
  */
 public class LoadingBenchmark extends AbstractBenchmark {
 
-    @Benchmark
-    public void benchmarkLoadUnload() {
 
-        preparePluginLoader.getPluginLoader().load();
-        preparePluginLoader.getPluginLoader().unload();
+    public LoadingBenchmark(PluginLoader<IPlugin> pluginLoader) {
+        super(pluginLoader);
+    }
 
+    @Override
+    protected void RunTest(int currentCycle) {
+        StartTimer();
+        _pluginLoader.load();
+        _pluginLoader.unload();
+        StopTimer();
+
+        DefineBenchmarkPoint(currentCycle, "Enable_Disable_Run");
+
+        ResetTimer();
     }
 }

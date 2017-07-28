@@ -1,28 +1,42 @@
 package com.github.ysl3000.benchmarks;
 
-import org.openjdk.jmh.annotations.Benchmark;
+import com.github.ysl3000.impl.pluginsystem.IPlugin;
+import com.github.ysl3000.impl.pluginsystem.PluginLoader;
 
 /**
  * Created by ysl3000
  */
 public class EnableDisableBenchmark extends AbstractBenchmark {
 
-    @Override
-    public void setUp(){
-        super.setUp();
-        preparePluginLoader.getPluginLoader().load();
+    public EnableDisableBenchmark(PluginLoader<IPlugin> pluginLoader) {
+        super(pluginLoader);
     }
 
-    @Benchmark
-    public void runEnableDisableBenchmark() {
-        preparePluginLoader.getPluginLoader().enable();
-
-        preparePluginLoader.getPluginLoader().disable();
-    }
     @Override
-    public void tearDown(){
-        preparePluginLoader.getPluginLoader().unload();
-        super.tearDown();
+    public void SetUp(){
+        super.SetUp();
+        _pluginLoader.load();
+    }
 
+
+    @Override
+    protected void TearDown(){
+       _pluginLoader.unload();
+        super.TearDown();
+
+    }
+
+    @Override
+    protected void RunTest(int currentCycle) {
+        StartTimer();
+        _pluginLoader.enable();
+
+        _pluginLoader.disable();
+
+        StopTimer();
+
+        DefineBenchmarkPoint(currentCycle, "Enable_Disable_Run");
+
+        ResetTimer();
     }
 }
