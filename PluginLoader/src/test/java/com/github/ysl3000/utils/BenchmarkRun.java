@@ -10,15 +10,15 @@ import java.util.stream.Collectors;
 public class BenchmarkRun {
 
 
-    private Map<String, Double> stats = new ConcurrentHashMap<>();
+    private Map<String, Long> stats = new ConcurrentHashMap<>();
 
 
-    public void DefineBenchmarkPoint(String benchmarkPointName, double microsElapsed)
+    public void DefineBenchmarkPoint(String benchmarkPointName, long microsElapsed)
     {
         stats.put(benchmarkPointName, microsElapsed);
     }
 
-    public void DefineBenchmarkPoint(String benchmarkPointName, int run, double microsElapsed)
+    public void DefineBenchmarkPoint(String benchmarkPointName, int run, long microsElapsed)
     {
         stats.put(benchmarkPointName + run, microsElapsed);
     }

@@ -22,7 +22,6 @@ import java.util.zip.ZipFile;
 public class PluginLoader<T extends IPlugin> {
 
     protected final Map<String, T> plugins = new HashMap<>();
-    private final Set<Class<IPlugin>> pluginClasses = new HashSet<>();
     private final File folder;
     private MessageLogger messageLogger;
     private PluginConfigLoader pluginConfigLoader;
@@ -44,14 +43,14 @@ public class PluginLoader<T extends IPlugin> {
 
 
             Set<URL> urls = new HashSet<>();
-            Stream.of(files).forEach(jar ->{
+            Stream.of(files).forEach(jar -> {
                 try {
                     urls.add(jar.toURI().toURL());
                 } catch (MalformedURLException ignored) {
                 }
             });
 
-            ClassLoader loader = URLClassLoader.newInstance(urls.toArray(new URL[]{}),getClass().getClassLoader());
+            ClassLoader loader = URLClassLoader.newInstance(urls.toArray(new URL[]{}), getClass().getClassLoader());
 
             if (files != null) {
                 for (File jar : files) {
@@ -62,13 +61,22 @@ public class PluginLoader<T extends IPlugin> {
                         InputStream is = zipFile.getInputStream(zipFile.getEntry("extension.properties"));
                         mainClass = pluginConfigLoader.getPathToMainPluginClass(is);
                         Class<?> clazz = loader.loadClass(mainClass);
-                        if(clazz.isAssignableFrom(IPlugin.class))
-                        pluginClasses.add((Class<IPlugin>) clazz);
+                        if (clazz.isAssignableFrom(IPlugin.class)) {
+
+
+                            Class<? extends IPlugin> castedClass = (Class<? extends IPlugin>) clazz;
+                            final T plugin = (T) castedClass.newInstance();
+                            plugins.put(castedClass.getSimpleName(), plugin);
+                        }
 
                     } catch (IOException ioException) {
                         ioException.printStackTrace();
                     } catch (ClassNotFoundException classNotFoundException) {
                         classNotFoundException.printStackTrace();
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    } catch (InstantiationException e) {
+                        e.printStackTrace();
                     }
 
                 }
@@ -78,29 +86,15 @@ public class PluginLoader<T extends IPlugin> {
     }
 
     public void enable() {
-        for (Class<?> clazz : pluginClasses) {
-            try {
-                Class<? extends IPlugin> castedClass = (Class<? extends IPlugin>) clazz;
-                final T plugin = (T) castedClass.newInstance();
-                plugins.put(castedClass.getSimpleName(), plugin);
-            } catch (InstantiationException | IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
-        plugins.values().forEach(plugin -> {
-            plugin.onEnable();
-        });
+        plugins.values().forEach(IPlugin::onEnable);
     }
 
     public void disable() {
-        for (T extension : plugins.values()) {
-            extension.onDisable();
-        }
+        plugins.values().forEach(IPlugin::onDisable);
     }
 
     public void unload() {
         plugins.clear();
-        pluginClasses.clear();
     }
 
 

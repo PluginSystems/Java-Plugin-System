@@ -70,11 +70,11 @@ public abstract class TestCase {
         _benchmarkRuns.get(cycle).DefineBenchmarkPoint(benchmarkPointName + "_" + (cycle + 1) + "_" + (run + 1), GetElapsedNanos());
     }
 
-    private double GetElapsedMicros() {
+    private long GetElapsedMicros() {
         return _stopwatch.elapsed(TimeUnit.MICROSECONDS);
     }
 
-    private double GetElapsedNanos() {
+    private long GetElapsedNanos() {
         return _stopwatch.elapsed(TimeUnit.NANOSECONDS);
     }
 

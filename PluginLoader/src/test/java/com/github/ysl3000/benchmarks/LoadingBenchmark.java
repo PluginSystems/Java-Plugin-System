@@ -20,7 +20,7 @@ public class LoadingBenchmark extends AbstractBenchmark {
         _pluginLoader.unload();
         StopTimer();
 
-        DefineBenchmarkPoint(currentCycle, "Enable_Disable_Run");
+        DefineBenchmarkPoint(currentCycle, "loading_unloading");
 
         ResetTimer();
     }

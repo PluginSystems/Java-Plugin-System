@@ -36,7 +36,7 @@ public class ContextSwitchBenchmark extends AbstractBenchmark{
         }
         StopTimer();
 
-        DefineBenchmarkPoint(currentCycle, "Enable_Disable_Run");
+        DefineBenchmarkPoint(currentCycle, "context_switch");
 
         ResetTimer();
     }
