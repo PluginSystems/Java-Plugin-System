@@ -1,9 +1,6 @@
 package com.github.ysl3000;
 
-import com.github.ysl3000.api.ContextAPI;
-import com.github.ysl3000.api.ContextInterface;
-import com.github.ysl3000.impl.pluginsystem.ContextImplementation;
-import com.github.ysl3000.api.IPlugin;
+import com.github.ysl3000.impl.pluginsystem.IPlugin;
 import com.github.ysl3000.impl.pluginsystem.PluginLoader;
 import com.github.ysl3000.impl.pluginsystem.PropertyPluginConfigLoader;
 import com.github.ysl3000.impl.pluginsystem.interfaces.MessageLogger;
@@ -21,7 +18,6 @@ public class PreparePluginLoader {
     private File folder;
     private PluginConfigLoader pluginConfigLoader;
     protected PluginLoader<IPlugin> pluginLoader;
-    private ContextInterface contextInterface;
 
 
     public void setUp(){
@@ -31,8 +27,6 @@ public class PreparePluginLoader {
         this.folder.mkdirs();
         this.pluginConfigLoader = new PropertyPluginConfigLoader();
         this.pluginLoader = new PluginLoader<>(messageLogger, folder, pluginConfigLoader);
-        this.contextInterface= new ContextImplementation(this.pluginLoader);
-        ContextAPI.setImpl(this.contextInterface);
 
     }
 
@@ -41,7 +35,6 @@ public class PreparePluginLoader {
         this.folder = null;
         this.pluginConfigLoader = null;
         this.pluginLoader = null;
-        this.contextInterface=null;
     }
 
     public PluginLoader<IPlugin> getPluginLoader(){

@@ -1,7 +1,5 @@
 package com.github.ysl3000.impl.pluginsystem;
 
-import com.github.ysl3000.api.IPlugin;
-import com.github.ysl3000.api.PluginStateChangeListener;
 import com.github.ysl3000.impl.pluginsystem.interfaces.MessageLogger;
 import com.github.ysl3000.impl.pluginsystem.interfaces.PluginConfigLoader;
 
@@ -29,8 +27,6 @@ public class PluginLoader<T extends IPlugin> {
     private MessageLogger messageLogger;
     private PluginConfigLoader pluginConfigLoader;
 
-    private Map<Class<? extends IPlugin>, PluginStateChangeListener> listeners = new HashMap<>();
-    private PluginStateChangeListener systemListener;
 
     public PluginLoader(MessageLogger messageLogger, File folder, PluginConfigLoader pluginConfigLoader) {
         this.messageLogger = messageLogger;
@@ -70,10 +66,8 @@ public class PluginLoader<T extends IPlugin> {
                         pluginClasses.add((Class<IPlugin>) clazz);
 
                     } catch (IOException ioException) {
-                        messageLogger.error("Error while loading module file " + jar.getName());
                         ioException.printStackTrace();
                     } catch (ClassNotFoundException classNotFoundException) {
-                        messageLogger.error("Class not found! Wrong main defined in extension.yml?: " + jar.getName() + " class: " + mainClass);
                         classNotFoundException.printStackTrace();
                     }
 
@@ -89,32 +83,19 @@ public class PluginLoader<T extends IPlugin> {
                 Class<? extends IPlugin> castedClass = (Class<? extends IPlugin>) clazz;
                 final T plugin = (T) castedClass.newInstance();
                 plugins.put(castedClass.getSimpleName(), plugin);
-                plugin.onRegister();
             } catch (InstantiationException | IllegalAccessException e) {
                 e.printStackTrace();
             }
         }
         plugins.values().forEach(plugin -> {
             plugin.onEnable();
-            listeners.values().parallelStream().forEach(l -> l.onPluginGetsEnabled(plugin));
-            if (systemListener != null) systemListener.onPluginGetsEnabled(plugin);
-            messageLogger.info(plugin.getPluginIdentity() + " enabled!");
-
         });
     }
 
     public void disable() {
         for (T extension : plugins.values()) {
-            this.removeListeners(extension);
             extension.onDisable();
-            listeners.values().parallelStream().forEach(l -> l.onPluginGetsDisabled(extension));
-            if (systemListener != null) systemListener.onPluginGetsDisabled(extension);
-            messageLogger.info(extension.getPluginIdentity() + " disabled!");
         }
-    }
-
-    private void removeListeners(IPlugin plugin) {
-        this.listeners.remove(plugin.getClass());
     }
 
     public void unload() {
@@ -122,13 +103,6 @@ public class PluginLoader<T extends IPlugin> {
         pluginClasses.clear();
     }
 
-    public void addListener(IPlugin plugin, PluginStateChangeListener listener) {
-        this.listeners.put(plugin.getClass(), listener);
-    }
-
-    public void addSystemListener(PluginStateChangeListener listener) {
-        this.systemListener = listener;
-    }
 
     public IPlugin getPlugin(String pluginName) {
         return plugins.get(pluginName);
