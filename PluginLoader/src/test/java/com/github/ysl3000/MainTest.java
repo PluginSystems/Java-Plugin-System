@@ -11,17 +11,13 @@ import com.github.ysl3000.impl.pluginsystem.interfaces.PluginConfigLoader;
 import com.github.ysl3000.impl.plugintest.ConsoleMessageLogger;
 import com.github.ysl3000.utils.TestCase;
 import org.junit.Test;
-import org.openjdk.jmh.annotations.Mode;
-import org.openjdk.jmh.runner.Runner;
-import org.openjdk.jmh.runner.RunnerException;
-import org.openjdk.jmh.runner.options.Options;
-import org.openjdk.jmh.runner.options.OptionsBuilder;
-import org.openjdk.jmh.runner.options.TimeValue;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by ysl3000
@@ -29,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 public class MainTest {
 
     @Test
-    public void testLoader() throws RunnerException {
+    public void testLoader() {
 
         MessageLogger m = new ConsoleMessageLogger();
 
